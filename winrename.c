@@ -24,12 +24,9 @@
 void exErr(char *msg);
 int isDigit(char *str);
 int fMove(char *source, char *dest);
-void slice(char *dest, char *src, int l);
 
 int main(int argc, char *argv[])
 {
-    /* Prepare to time execution. */
-    clock_t dur = clock();
 
     if (argc != 2)
         exErr("Usage: winrename.exe PATH\n(eg. D:\\FTP\\)\n");
@@ -41,7 +38,6 @@ int main(int argc, char *argv[])
     char page[3], day[3], month[4] = "";
     char *eds = "CBSA", *edn = "1234", *ptr;
     char e;
-    double timeEx;
 
     /* Find the month. */
     char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -97,7 +93,7 @@ int main(int argc, char *argv[])
         /* Check if month is set, if not, set it. */
         if (!strcmp(month, ""))
         {
-            slice(day, &fname[4],2);
+            sprintf(day, "%.2s", &fname[4]);
             if (!isDigit(day))
                 continue;
             if (atoi(day) < d)
@@ -107,7 +103,7 @@ int main(int argc, char *argv[])
         }
 
         /* Check page number is digit and add to new filename. */
-        slice(page, &fname[6],2);
+        sprintf(page, "%.2s", &fname[6]);
         if (!isDigit(page))
             continue;
 
@@ -130,21 +126,10 @@ int main(int argc, char *argv[])
     }
 
     closedir(dhandle);
-    timeEx = ((double)(clock() - dur)) / CLOCKS_PER_SEC;
-    printf("Execution time: %f seconds. \n", timeEx);
 
     return 0;
 }
 
-/* Slice: returns a substring. Dest must be big enough.
- * Pass dest, start address in src and length. */
-void slice(char *dest, char *src, int l)
-{
-    int i;
-    for (i = 0; i < l; i++)
-       *dest++ = *src++;
-    *dest = '\0';
-}
 
 /* Do a file move. */
 int fMove(char *source, char *dest)
